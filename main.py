@@ -5,7 +5,7 @@ from werkzeug.exceptions import UnsupportedMediaType
 import sqlite3
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 def connect_db():
     return sqlite3.connect('store.db')
@@ -163,4 +163,3 @@ def signup():
 if __name__ == '__main__':
     initialize_db()
     app.run(host='0.0.0.0', port=5000)
-
