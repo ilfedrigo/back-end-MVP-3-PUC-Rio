@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS, cross_origin
+from datetime import datetime
 from werkzeug.exceptions import UnsupportedMediaType
 import sqlite3
 
@@ -14,12 +15,25 @@ def initialize_db():
         cursor = connection.cursor()
 
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS store (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item TEXT NOT NULL,
-            price FLOAT NOT NULL
+        CREATE TABLE IF NOT EXISTS checkout (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_user INTEGER,
+        updated_at DATE,
+        total FLOAT
         )
         """)
+
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS store (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        item TEXT NOT NULL,
+        price FLOAT NOT NULL,
+        id_checkout INTEGER,
+        FOREIGN KEY (id_checkout) REFERENCES checkout(id)
+        )
+        """)
+        # cursor.execute("DROP TABLE IF EXISTS store")
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -31,20 +45,35 @@ def initialize_db():
 
         connection.commit()
 
+@app.route('/')
+@cross_origin()
+def login_page():
+    return render_template('login.html')
+
 @app.route('/checkout', methods=['POST'])
 @cross_origin() 
 def checkout():
     if request.headers.get('Content-Type') != 'application/json':
         raise UnsupportedMediaType('Only JSON format is supported')
-    data = request.get_json()  # Recebe os dados enviados pelo front-end
-    if data and 'cart' in data:  # Verifica se 'cart' está presente nos dados recebidos
+    data = request.get_json()
+    updated_at = datetime.now().date()
+    id_user = 1
+    if data and 'cart' in data: 
         try:
             with connect_db() as connection:
                 cursor = connection.cursor()
+                cursor.execute("INSERT INTO checkout (id_user, updated_at) VALUES (?, ?)", 
+                               (id_user, updated_at))
+                checkout_id = cursor.lastrowid
+                total = 0
                 for item in data['cart']:
-                    cursor.execute("INSERT INTO store (item, price) VALUES (?, ?)",
-                           (item['item'], item['price']))
+                    total += item['price']
+                    cursor.execute("INSERT INTO store (item, price, id_checkout) VALUES (?, ?, ?)",
+                           (item['item'], item['price'], checkout_id))
+                cursor.execute("UPDATE checkout SET total = ? WHERE id = ?", 
+                               (total, id_user))
                 connection.commit()
+                print(total)
                 return jsonify({'message': 'Items added to the database successfully'}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 500
@@ -134,5 +163,6 @@ def signup():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    initialize_db()  # Inicializa o banco de dados
-    app.run(debug=True)
+    initialize_db()
+    app.run(host='0.0.0.0', port=5000)
+

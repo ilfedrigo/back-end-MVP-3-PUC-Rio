@@ -1,13 +1,20 @@
-FROM python:3.9-slim
 
-ENV FLASK_APP=app.py
+FROM python:3.9
 
+
+ENV FLASK_APP=main.py
+
+# Copie os arquivos do back-end para o diretório de trabalho no container
 COPY back-end-MVP-3-PUC-Rio/ /app
 
+# Defina o diretório de trabalho
 WORKDIR /app
 
-RUN pip3 install --no-cache-dir -r requirements.txt
+# Instale as dependências do Python
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Exponha a porta do Flask (se necessário)
 EXPOSE 5000
 
-CMD ["flask", "run", "--host=127.0.0.1"]
+# Comando para iniciar o servidor Flask
+CMD ["flask", "run", "--host=0.0.0.0"]
