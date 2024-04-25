@@ -23,7 +23,6 @@ def initialize_db():
         )
         """)
 
-
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS store (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +32,6 @@ def initialize_db():
         FOREIGN KEY (id_checkout) REFERENCES checkout(id)
         )
         """)
-        # cursor.execute("DROP TABLE IF EXISTS store")
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -124,7 +122,7 @@ def edit_order(item_id):
 @app.route('/login', methods=['POST'])
 @cross_origin()
 def login():    
-    data = request.get_json()  # Recebe os dados enviados pelo front-end
+    data = request.get_json() 
     username = data.get('username')
     password = data.get('password')
     
