@@ -2,6 +2,8 @@
 
 O UrbanTrendz Backend é responsável por gerenciar as operações relacionadas a compras, autenticação de usuários e interações com o banco de dados.
 
+O back-end implementa rotas com Flask e Banco de Dados com SQLite3
+
 ## Arquitetura
 
 <img width="441" alt="Screenshot 2024-04-25 at 11 08 04" src="https://github.com/ilfedrigo/back-end-MVP-3-PUC-Rio/assets/115956776/7b73864b-1f46-439f-8a97-75de59213e6b">
