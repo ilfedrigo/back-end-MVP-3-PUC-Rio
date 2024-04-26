@@ -45,6 +45,7 @@ docker run -p 5006:5006 urbantrendz-backend
 4. **/orders/<item_id>** (`delete_order` e `edit_order`):
    - Método: DELETE (delete_order), PUT (edit_order)
    - `/orders/<item_id>` é uma rota dinâmica que permite a exclusão (DELETE) e atualização (PUT) de um item específico do banco de dados com base no seu ID.
+   - Perceba que o botão **EDIT** ainda não foi completamente implementado.
 
 5. **/login** (`login`):
    - Método: POST
@@ -62,6 +63,3 @@ docker run -p 5006:5006 urbantrendz-backend
 Essas rotas fornecem a funcionalidade essencial para o funcionamento do UrbanTrendz Backend, permitindo que os usuários autentiquem-se, realizem compras, gerenciem seus carrinhos e visualizem e manipulem as ordens de compra.
 
 ---
-
-Para mais detalhes sobre as rotas e a lógica implementada, consulte o código-fonte em `main.py`.
-
